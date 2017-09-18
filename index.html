@@ -16,7 +16,8 @@
         var game = new Phaser.Game(800, 900, Phaser.AUTO, "#game", {
           preload: preload,
           create: create,
-          update: update
+          update: update,
+          render: render
         });
 
         // Basic configuration values
@@ -59,7 +60,17 @@
           // Scale the player ship to 1/4 scale from original image
           player.scale.setTo(0.25, 0.25);
           game.physics.enable(player, Phaser.Physics.ARCADE);
+
+          // TODO: 100x100 doesn't work
+          player_box_size = {
+            width: 75,
+            height: 75
+          }
+          player_box_x = (player.width / 2) - ((player.width / 2) - (player_box_size.width / 2));
+          player_box_y = (player.height / 2) + ((player.height / 2) - (player_box_size.height / 2));
+          player.body.setSize(player_box_size.width, player_box_size.height, player_box_x, player_box_y);
           player.body.collideWorldBounds = true;
+          player.body.tint = "#ff0000";
 
           // Bullets
           bullets = game.add.group();
@@ -134,6 +145,10 @@
               bulletFireDelay = game.time.now + 200;
             }
           }
+        }
+
+        function render () {
+          game.debug.body(player);
         }
     </script>
 </head>
