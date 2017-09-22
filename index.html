@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Phaser - Making your first game, part 1</title>
     <script type="text/javascript" src="js/phaser.min.js"></script>
+    <script type="text/javascript" src="js/components/enemy.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -24,9 +25,9 @@
         // overload these for upgrades / etc
         var config = {
           player: {
-            speed: 200,
+            speed: 250,
             bullet: {
-              speed: 400
+              speed: 450
             }
           },
           enemy: {
@@ -38,7 +39,9 @@
         var bullets;
         var bulletFireDelay = 0;
         var fireButton;
-        var drones;
+        var dronesGroup;
+        var score = 0;
+        var scoreElement;
 
         function preload () {
           // game.load.sprite("bullet", )
@@ -59,8 +62,6 @@
 
           // Scale the player ship to 1/4 scale from original image
           player.scale.setTo(0.25, 0.25);
-          game.physics.enable(player, Phaser.Physics.ARCADE);
-
           // TODO: 100x100 doesn't work
           player_box_size = {
             width: 75,
@@ -68,7 +69,9 @@
           }
           player_box_x = (player.width / 2) - ((player.width / 2) - (player_box_size.width / 2));
           player_box_y = (player.height / 2) + ((player.height / 2) - (player_box_size.height / 2));
+          game.physics.enable(player, Phaser.Physics.ARCADE);
           player.body.setSize(player_box_size.width, player_box_size.height, player_box_x, player_box_y);
+
           player.body.collideWorldBounds = true;
           player.body.tint = "#ff0000";
 
@@ -80,14 +83,35 @@
           bullets.setAll("outOfBoundsKill", true);
           bullets.setAll("checkWorldBounds", true);
 
-          // Enemies
-          drones = game.add.group();
-          drones.enableBody = true;
-          drones.physicsBodyType = Phaser.Physics.ARCADE;
+          // Drones
+          dronesGroup = game.add.group();
+          dronesGroup.enableBody = true;
+          dronesGroup.physicsBodyType = Phaser.Physics.ARCADE;
 
-          var drone = drones.create(90, 90, "drone");
-          drone.scale.setTo(0.25, 0.25);
-          drone.body.collideWorldBounds = true;
+          // TODO: Enable spawning of new drones
+          // TODO: Use classes for drones
+          for (var i = 0; i < 12; i++) {
+            let drone = dronesGroup.create(360 + Math.random() * 200, 120 + Math.random() * 200, 'drone');
+            drone.scale.setTo(0.25, 0.25);
+
+            // TODO: Kill drone when leaves screen
+            // drone.body.outOfBoundsKill = false;
+            drone.body.velocity.y = ((Math.random() * 40) + 10);
+          }
+
+          // var drone = new Drone(dronesGroup.create(90, 90, "drone"));
+          // drone.sprite.scale.setTo(0.25, 0.25);
+          // drone.sprite.body.collideWorldBounds = true;
+
+          // Score
+          scoreElement = game.add.text(10, 10, formattedScoreText(), {
+            font: "34px Arial",
+            fill: "#fff"
+          });
+        }
+
+        function formattedScoreText () {
+          return "Score: " + score;
         }
 
         /**
@@ -97,8 +121,8 @@
           cursors = game.input.keyboard.createCursorKeys();
 
           // Collisions
-          game.physics.arcade.collide(player, drones);
-          game.physics.arcade.overlap(bullets, drones, playerBulletHandler, null, this);
+          game.physics.arcade.collide(player, dronesGroup);
+          game.physics.arcade.overlap(bullets, dronesGroup, playerBulletHandler, null, this);
 
           // Initial player velocity state
           player.body.velocity.x = 0;
@@ -122,18 +146,32 @@
           }
 
           // Player actions
-          // TODO: Bug up+left disallows firing
+          // BUG: up+left disallows firing
           if (fireButton.isDown) {
-            fireBullet();
+            firePlayerBullet();
           }
         }
 
         function playerBulletHandler (bullet, drone) {
           bullet.kill();
           drone.kill();
+
+          // TODO: Trigger explosion on enemy
+          // TODO: Assign point values to dronesGroup
+          score += drone.points;
+          scoreElement.text = formattedScoreText();
         }
 
-        function fireBullet () {
+        function enemyBulletHandler (bullet) {
+          bullet.kill();
+          player.kill();
+
+          // TODO: Trigger explosion on player
+
+          // TODO: Remove 1 life
+        }
+
+        function firePlayerBullet () {
 
           if (game.time.now > bulletFireDelay) {
             bullet = bullets.getFirstExists(false);
@@ -150,6 +188,19 @@
         function render () {
           game.debug.body(player);
         }
+
+        /**
+         * Player
+         * - Fires
+         * - Moves
+         * - has score
+         * - has lives
+         * Enemy
+         * - has score value
+         * - has health
+         * Score
+         * - Calculates based on enemy point value
+         */
     </script>
 </head>
 <body>
