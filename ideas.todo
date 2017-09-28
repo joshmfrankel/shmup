@@ -2,3 +2,30 @@
 Ideas:
   ☐ Area the slows down ship and adds inertia
   ☐ Gravity pulling effect
+
+Tasks:
+
+  Alpha:
+    ☐ Player dies when hitting a drone
+    ✔ Player can shoot drones @done (17-09-28 19:38)
+      ✔ Drones have custom point score @done (17-09-28 19:38)
+    ☐ Drones are randomly created at a time interval
+
+  MVP:
+  ✔ Add score text @done (17-09-28 19:37)
+  ☐ Add explosion for drones
+  ☐ Add explosion for player
+  ☐ Add scrolling starfield for background
+  ☐ Add drones firing back at player
+  ☐ Create drones off screen randomly
+
+  1.0:
+  ☐ Add left and right panels for text
+    ☐ Move score text into panel
+  ☐ Create player bullet sprite
+  ☐ Create drone bullet sprite
+  ☐ Add first boss battle
+  ☐ Add three difficulty levels
+    ☐ Normal - enemies rarely fire back
+    ☐ Hard - Enemies fire back more often
+    ☐ Insance - Enemies fire often and explode with death bullets
