@@ -2,11 +2,18 @@
 Ideas:
   ☐ Area the slows down ship and adds inertia
   ☐ Gravity pulling effect
+  ☐ Enemy anticipates firing by where player bullet is x/y in relation to itself
 
 Tasks:
 
+Randomly assign them locations and time intervals
+Have the fly downwards
+Load drones off screen
+Have them fire when player is directly below them
+
+
   Alpha:
-    ☐ Player dies when hitting a drone
+    ✔ Player dies when hitting a drone @done (17-10-07 12:53)
     ✔ Player can shoot drones @done (17-09-28 19:38)
       ✔ Drones have custom point score @done (17-09-28 19:38)
     ☐ Drones are randomly created at a time interval
