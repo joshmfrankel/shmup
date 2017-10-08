@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <title>Phaser - Making your first game, part 1</title>
-    <script type="text/javascript" src="js/phaser.min.js"></script>
+    <script type="text/javascript" src="js/vendor/phaser.min.js"></script>
+    <script type="text/javascript" src="js/components/player.js"></script>
     <script type="text/javascript" src="js/components/enemy.js"></script>
     <script type="text/javascript" src="js/helpers/sprite_loader.js"></script>
+    <script type="text/javascript" src="js/preload.js"></script>
+    <script type="text/javascript" src="js/create.js"></script>
+    <script type="text/javascript" src="js/update.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -38,6 +42,10 @@
           }
         }
 
+
+        /**
+         * Globals
+         */
         var player;
         var bullets;
         var bulletFireDelay = 0;
@@ -47,133 +55,12 @@
         var fireButton;
         var dronesGroup;
         var score = 0;
-        var scoreElement;
         var textElement;
-
-        function preload () {
-          // game.load.sprite("bullet", )
-          game.load.image("player", "assets/ship.png");
-          game.load.image("drone", "assets/enemy_drone.png");
-          game.load.spritesheet("bullet", "assets/bullets.png", 20, 30);
-        }
-
-        function createPlayer() {
-          // Sprites
-          player = game.add.sprite(game.world.width / 2, game.world.height / 2, "player");
-
-          // Set player configurations
-          // TODO: Override for difficulty level
-          player.configuration = config.player;
-
-          // Scale the player ship to 1/4 scale from original image
-          player.scale.setTo(0.25, 0.25);
-          // TODO: 100x100 doesn't work
-          player_box_size = {
-            width: 75,
-            height: 75
-          }
-          player_box_x = (player.width / 2) - ((player.width / 2) - (player_box_size.width / 2));
-          player_box_y = (player.height / 2) + ((player.height / 2) - (player_box_size.height / 2));
-          game.physics.enable(player, Phaser.Physics.ARCADE);
-          player.body.setSize(player_box_size.width, player_box_size.height, player_box_x, player_box_y);
-
-          player.body.collideWorldBounds = true;
-        }
-
-        function create() {
-          // Game Configuration
-          game.physics.startSystem(Phaser.Physics.ARCADE);
-
-          // Controls
-          fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-          createPlayer();
-
-          // Bullets
-          bullets = game.add.group();
-          bullets.enableBody = true;
-          bullets.physicsBodyType = Phaser.Physics.ARCADE;
-          bullets.createMultiple(30, "bullet");
-          bullets.setAll("outOfBoundsKill", true);
-          bullets.setAll("checkWorldBounds", true);
-
-          // Drones
-          dronesGroup = game.add.group();
-          dronesGroup.enableBody = true;
-          dronesGroup.physicsBodyType = Phaser.Physics.ARCADE;
-
-          textElement = game.add.text(
-            10,
-            10,
-            textUpdate(),
-            {
-              fill: "#fff",
-              font: "34px Arial",
-            }
-          );
-        }
-
-        /**
-         * Main game loop
-         */
-        function update () {
-          cursors = game.input.keyboard.createCursorKeys();
-
-          // Collisions
-          game.physics.arcade.collide(player, dronesGroup, playerCollisionHandler);
-          game.physics.arcade.overlap(bullets, dronesGroup, playerBulletHandler, null);
-
-          // Enemy loader
-          if (game.time.now > enemySpawnDelay + 1500) {
-            x_position = game.world.width - (game.world.width * Math.random());
-            y_position = 0;
-            drone = new Drone(game, x_position, y_position, "drone");
-            drone.scale.setTo(0.25, 0.25);
-            drone.body.velocity.y = drone.configuration.speed;
-            new GroupSpriteLoader(game, drone, dronesGroup);
-
-            // Reset spawn timer
-            enemySpawnDelay = game.time.now;
-          }
-
-          // When player has been destroyed
-          if (player.alive === false) {
-            playerDeathHandler();
-          } else {
-            // Initial player velocity state
-            player.body.velocity.x = 0;
-            player.body.velocity.y = 0;
-
-            /**
-             * Basic Movement
-             *
-             * Multiple if statements support simultaenous key presses
-             */
-            if (cursors.left.isDown) {
-              player.body.velocity.x = config.player.speed * -1;
-            } else if (cursors.right.isDown) {
-              player.body.velocity.x = config.player.speed;
-            }
-
-            if (cursors.up.isDown) {
-              player.body.velocity.y = config.player.speed * -1;
-            } else if (cursors.down.isDown) {
-              player.body.velocity.y = config.player.speed;
-            }
-
-            // Player actions
-            // BUG: up+left disallows firing
-            if (fireButton.isDown) {
-              firePlayerBullet();
-            }
-
-            // Ensure that respawn is always set at the end of update loop
-            respawnDelay = game.time.now;
-          }
-        }
+        var eventTextUpdateElement;
+        var starfield;
 
         function render () {
-          game.debug.body(player);
+          // game.debug.body(player);
           // game.debug.body(drone_1);
         }
 
@@ -185,63 +72,12 @@
           + "\nLives: " + player.configuration.lives
         }
 
-        function playerBulletHandler (bullet, enemy) {
-          bullet.kill();
-          enemy.kill(); // TODO: Kill if health is 0
-
-          // TODO: Trigger explosion on enemy
-          score += enemy.configuration.points;
-          textElement.text = textUpdate();
-        }
-
-        function playerCollisionHandler (player, colliding_object) {
-
-          // Ensure only 1 life is lost
-          if (game.time.now > collisionDelay) {
-            player.kill();
-            colliding_object.kill();
-            // TODO: Trigger explosion on enemy
-            // TODO: Trigger explosion on player
-            player.configuration.lives--;
-
-            textElement.text = textUpdate();
-            collisionDelay = game.time.now
-          }
-        }
-
         function enemyBulletHandler (bullet) {
           bullet.kill();
           player.kill();
 
           // TODO: Trigger explosion on player
           // TODO: Remove 1 life
-        }
-
-        function playerDeathHandler () {
-          // TODO: Blinking for 3 seconds at bottom of screen (invulernable)
-          if (player.configuration.lives > 0) {
-
-            if (game.time.now > respawnDelay + 500) {
-
-              createPlayer();
-            }
-          } else {
-            // Gameover
-          }
-        }
-
-        function firePlayerBullet () {
-
-          if (game.time.now > bulletFireDelay) {
-            bullet = bullets.getFirstExists(false);
-
-            if (bullet) {
-              bullet.reset(player.x + 33, player.y - 25);
-              bullet.body.velocity.y = config.player.bullet.velocity * -1;
-
-              bulletFireDelay = game.time.now + config.player.bullet.rateOfFire;
-            }
-          }
         }
     </script>
 </head>

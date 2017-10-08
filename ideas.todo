@@ -5,34 +5,32 @@ Ideas:
   ☐ Enemy anticipates firing by where player bullet is x/y in relation to itself
 
 Tasks:
-
-Randomly assign them locations and time intervals
-Have the fly downwards
-Load drones off screen
-Have them fire when player is directly below them
-
-
-  Alpha:
-    ✔ Player dies when hitting a drone @done (17-10-07 12:53)
-    ✔ Player can shoot drones @done (17-09-28 19:38)
-      ✔ Drones have custom point score @done (17-09-28 19:38)
-    ☐ Drones are randomly created at a time interval
-
-  MVP:
+  ✔ Player dies when hitting a drone @done (17-10-07 12:53)
+  ✔ Player can shoot drones @done (17-09-28 19:38)
+  ✔ Drones have custom point score @done (17-09-28 19:38)
+  ✔ Randomly assign them locations and time intervals @done (17-10-07 20:52)
+  ✔ Have the fly downwards @done (17-10-07 20:52)
+  ☐ Load drones off screen
+  ☐ Kill drones when the reach bottom border (recycle into group)
+  ☐ Have them fire when player is directly below them
   ✔ Add score text @done (17-09-28 19:37)
   ☐ Add explosion for drones
   ☐ Add explosion for player
-  ☐ Add scrolling starfield for background
-  ☐ Add drones firing back at player
-  ☐ Create drones off screen randomly
+  ✔ Add scrolling starfield for background @done (17-10-07 20:53)
+  ☐ State Text
+    ☐ Fade in Gameover text
+    ☐ Fade in Level text
+    ✔ Center @done (17-10-07 21:00)
+  ☐ Blink player ship back into existence after respawn (tint)
+    ☐ With temporarily invulnerability
 
   1.0:
   ☐ Add left and right panels for text
     ☐ Move score text into panel
-  ☐ Create player bullet sprite
-  ☐ Create drone bullet sprite
   ☐ Add first boss battle
   ☐ Add three difficulty levels
-    ☐ Normal - enemies rarely fire back
-    ☐ Hard - Enemies fire back more often
-    ☐ Insance - Enemies fire often and explode with death bullets
+    ☐ Easy - Enemies rarely fire
+    ☐ Normal - Enemies fire often
+    ☐ Hard - Enemies fire often and explode with death bullets
+    ☐ Very Hard - Enemies fire often, explode with death bullets, and sometimes dodge
+    ☐ Bullet Hell - Enemies fire constantly, explode with directed death bullets, dodge frequently
